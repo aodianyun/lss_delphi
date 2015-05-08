@@ -1,0 +1,17 @@
+unit test; 
+
+interface 
+
+type 
+TCallBackFun=function(const pszJson:PChar):Boolean; cdecl;
+TCreateRtmpPlayer=function(fn:TCallBackFun):Pointer; cdecl;
+TCallInJson=function(rtmp:Pointer;const pszCmd:PChar;ppszRes:PPChar):Boolean; cdecl;
+TSetVdDisplayWnd=procedure(rtmp:Pointer;hwnd:THandle); cdecl;
+TCreateRtmpPublish=function(fn:TCallBackFun):Pointer; cdecl;
+TSetPublishVideoPara=procedure(rtmp:Pointer;uWidth:Intege;uHeight:Integer;uFrameRate:Integer;uBitRate:Integer;hVideo:THandle;uKeyFrameInterval:Integer); cdecl;
+TRealease=procedure(rtmp:Pointer); cdecl;
+THandle=Integer;
+
+implementation
+
+end.
