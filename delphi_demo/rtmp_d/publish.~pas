@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,typdef, StdCtrls, ExtCtrls,jpeg;
+  Dialogs,typdef, StdCtrls, ExtCtrls,jpeg, ComCtrls;
 
 type
   TForm1 = class(TForm)
@@ -16,10 +16,40 @@ type
     edt_pubAddress: TEdit;
     edt_app: TEdit;
     edt_stream: TEdit;
+    lbl_width: TLabel;
+    lbl_height: TLabel;
+    lbl_fps: TLabel;
+    lbl_bits: TLabel;
+    lbl_iframe: TLabel;
+    lbl_bframe: TLabel;
+    lbl_qulity: TLabel;
+    edt_width: TEdit;
+    edt_height: TEdit;
+    edt_fps: TEdit;
+    edt_bits: TEdit;
+    edt_iframe: TEdit;
+    edt_Bframe: TEdit;
+    edt_qulity: TEdit;
+    lbl_videoparas: TLabel;
+    lbl_samplerate: TLabel;
+    lbl_channels: TLabel;
+    lbl_bitpersample: TLabel;
+    lbl_aubits: TLabel;
+    edt_asample: TEdit;
+    edt_auchannels: TEdit;
+    edt_aubitpersample: TEdit;
+    edt_aubits: TEdit;
+    lbl_audioparas: TLabel;
+    trckbr_volum: TTrackBar;
+    lbl_volum: TLabel;
+    chk_bmute: TCheckBox;
+    mmo_result: TMemo;
+    lbl_callback: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btn_startClick(Sender: TObject);
     procedure btn_stopClick(Sender: TObject);
     procedure showLogo();
+    procedure OnChange(Sender: TObject);
   private
     { Private declarations }
     Handle:THandle;
@@ -43,9 +73,65 @@ implementation
 {$R *.dfm}
 
 function CallBack(const pszJson:PChar):Boolean; cdecl;
+var
+//  js:TlkJSONobject;
+//  tmpParam:TlkJSONobject;
+//  tmp2:TlkJSONbase;
+//  ws:TlkJSONstring;
+  s:string;
+//  cmd:string;
+//  i:Integer;
+//  total:Integer;
+//  tmpbuffer:string;
+//  f:Real;
+//  start:Integer;
+//  num:TlkJSONnumber;
 begin
-  //ShowMessage(pszJson);
-  Result:=True;
+      if(pszJson = nil) then
+      begin
+        Result := False;
+        Exit;
+      end;
+      s := UTF8Encode(pszJson);
+      Application.ProcessMessages;
+      Form1.mmo_result.Text := s;
+      //SendMessage(Form1.mmo_result.Handle,WM_SETTEXT,0,LPARAM(s));
+//      js := TlkJSONobject.Create();
+//      tmpParam := TlkJSONobject.Create();
+//      s := UTF8Encode(pszJson);
+//      js := TlkJSON.ParseText(s) as TlkJSONobject;
+//      cmd := js.Field['cmd'].Value;
+//      tmpParam := js.Field['params'] as TlkJSONobject;
+//      s := TlkJSON.GenerateText(tmpParam);
+//      if(cmd = 'OnRtmpPublishManagerNetInfo') then
+////      var
+////        uPing:Integer;
+////        uVideoBitSum:Integer;
+////        fVideoBitRate:
+//      begin
+//
+//      end
+//      else if(cmd = 'OnRtmpPublishManagerComputerStatusInfo')then
+//      begin
+//
+//      end
+//      else if(cmd = 'OnRtmpPublishManagerNetInfo') then
+//      begin
+//
+//      end
+//      else if(cmd = 'OnShowVideo') then
+//      begin
+//
+//      end
+//      else if(cmd = 'OnAudioPercent') then
+//      begin
+//
+//      end;
+////      s := TlkJSON.GenerateText(tmpParam);
+////      tmp3 := tmpParam.Field['mics'] as TlkJSONlist;
+////      i := tmp3.Count;
+//      js.Free;
+  Result :=True;
 end;
 
 procedure TForm1.showLogo();
@@ -54,17 +140,13 @@ var
   mycanvas:TControlCanvas;
 begin
   myjpg:=Tjpegimage.Create ;
-  ShowMessage(SysErrorMessage(GetLastError));
   mycanvas:=TControlCanvas.Create ;
-  ShowMessage(SysErrorMessage(GetLastError));
   myjpg.LoadFromFile('logo.jpg') ;
   mycanvas.Control :=pnl_video;
-  ShowMessage(SysErrorMessage(GetLastError));
   mycanvas.StretchDraw(pnl_video.ClientRect ,myjpg);
-  ShowMessage(SysErrorMessage(GetLastError));
   myjpg.Free ;
   mycanvas.Free;
- // pnl_video.Repaint ;
+  pnl_video.Repaint ;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -186,13 +268,8 @@ var
 
    js:TlkJSONobject;
   tmpParam:TlkJSONobject;
-  //:TlkJSONbase;
-  //ws:TlkJSONstring;
   s:string;
   i:Integer;
-  //start:Integer;
-  //num:TlkJSONnumber;
-  //tmp3:TlkJSONlist;
 begin
 	 m_strScheduleSvr := edt_pubAddress.Text;
 	 m_strPublishRoomInfo := edt_app.Text;
@@ -202,22 +279,22 @@ begin
    strApp :=  m_strPublishRoomInfo+'?'+m_strKey;
 
 	 //@ video paragment
-	 m_iVdFps := 10;
-	 m_iVdBitRate := 160*1000;
-	 m_iVdWidth := 320;
-	 m_iVdHeight := 240;
-	 m_iVdQuality := 80;
-	 m_iVdInterval := 30;
-	 m_iBFrame := 0;
-	 m_iQuality := 0;
+	 m_iVdFps := strtoint(edt_fps.Text);
+	 m_iVdBitRate := strtoint(edt_bits.Text)*1000;
+	 m_iVdWidth := strtoint(edt_width.Text);
+	 m_iVdHeight := strtoint(edt_height.Text);
+	 m_iVdQuality := strtoint(edt_qulity.Text);
+	 m_iVdInterval := strtoint(edt_iframe.Text);
+	 m_iBFrame := strtoint(edt_Bframe.Text);
+	 m_iQuality := strtoint(edt_qulity.Text);
 
 	 //@ audio para
-	 m_iAdSampleRate := 44100;
-	 m_iAdBitRate := 32*1000;
-	 m_iAdChannels := 2;
-	 m_iAdBitPerSample := 16;
-	 m_iAdVolum := 80;
-	 m_bAdMute := false;
+	 m_iAdSampleRate := strtoint(edt_asample.Text);
+	 m_iAdBitRate := strtoint(edt_aubits.Text)*1000;
+	 m_iAdChannels := strtoint(edt_auchannels.Text);
+	 m_iAdBitPerSample := strtoint(edt_aubitpersample.Text);
+	 m_iAdVolum := trckbr_volum.Position;
+	 m_bAdMute := chk_bmute.Checked;
 	 m_bShowSpectrum := true;
 
 	 m_bOtherPlayerMute := false;
@@ -247,8 +324,6 @@ begin
     js.Add('params',tmpParam);
     s := TlkJSON.GenerateText(js);
     CallInJson(pRtmp,PChar(s),@pRes);
-
-    //DoTest(pRtmp,pnl_video.Handle);
 
     // SetPublishAudioPara
     ZeroMemory(pRes,1024);
@@ -331,6 +406,37 @@ begin
     js := TlkJSONobject.Create();
     tmpParam := TlkJSONobject.Create();
     js.Add('cmd','StopPublish');
+    js.Add('params',tmpParam);
+    s := TlkJSON.GenerateText(js);
+    CallInJson(pRtmp,PChar(s),@pRes);
+
+    js.Free;
+    FreeMem(pRes);
+    s := '123';
+    PostMessage(mmo_result.Handle,WM_SETTEXT,0,LPARAM(s));
+end;
+
+procedure TForm1.OnChange(Sender: TObject);
+var
+  bMute:Boolean;
+  iAdVolum:Integer;
+
+  js:TlkJSONobject;
+  tmpParam:TlkJSONobject;
+  s:string;
+  i:Integer;
+
+begin
+    iAdVolum := trckbr_volum.Position;
+    bMute := chk_bmute.Checked;
+
+    GetMem(pRes,1024);
+    ZeroMemory(pRes,1024);
+    js := TlkJSONobject.Create();
+    tmpParam := TlkJSONobject.Create();
+    tmpParam.Add('uVolum',iAdVolum);
+    tmpParam.Add('bMute',bMute);
+    js.Add('cmd','SetPublishVolum');
     js.Add('params',tmpParam);
     s := TlkJSON.GenerateText(js);
     CallInJson(pRtmp,PChar(s),@pRes);

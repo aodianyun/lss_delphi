@@ -1,4 +1,4 @@
-program Project2;
+program rtmpPublish;
 
 uses
   ExceptionLog,
